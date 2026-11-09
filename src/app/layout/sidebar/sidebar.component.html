@@ -1,0 +1,81 @@
+
+<aside
+  class="sidebar"
+  id="admin-navigation"
+  [class.sidebar-open]="mobileOpen"
+  [class.sidebar-collapsed]="collapsed">
+
+  <!-- Brand -->
+  <div class="brand">
+    <div class="brand-logo">
+      <span>CG</span>
+      <span class="logo-dot"></span>
+    </div>
+
+    <div class="brand-text">
+      <strong>Career Groups</strong>
+      <span>OF COMPUTER EDUCATION</span>
+    </div>
+
+    <button
+      class="mobile-close"
+      type="button"
+      aria-label="Close sidebar"
+      (click)="onNavigate()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+
+  <!-- Navigation -->
+  <nav class="sidebar-nav" aria-label="Admin navigation">
+
+    <section
+      class="nav-group"
+      *ngFor="let group of menuGroups">
+
+      <p class="nav-heading">{{ group.title }}</p>
+
+      <a
+        *ngFor="let item of group.items"
+        class="nav-link"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="onNavigate()"
+        [title]="collapsed ? item.label : ''">
+
+        <span class="nav-icon">
+          <i class="bi" [ngClass]="item.icon"></i>
+        </span>
+
+        <span class="nav-label">{{ item.label }}</span>
+
+        <!-- <i class="bi bi-chevron-right nav-arrow"></i> -->
+      </a>
+    </section>
+  </nav>
+
+  <!-- Bottom -->
+  <div class="sidebar-bottom">
+    <div class="sidebar-divider"></div>
+
+    <button
+      class="logout-btn"
+      type="button"
+      (click)="logout()">
+      <span class="nav-icon">
+        <i class="bi bi-box-arrow-left"></i>
+      </span>
+      <span class="nav-label">Sign out</span>
+      <i class="bi bi-arrow-right logout-arrow"></i>
+    </button>
+
+    <div class="sidebar-version">
+      <span class="version-dot"></span>
+      <span class="version-label">Career Groups Admin</span>
+      <span class="version-number">v1.0</span>
+    </div>
+  </div>
+
+</aside>

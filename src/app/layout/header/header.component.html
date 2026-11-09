@@ -1,0 +1,117 @@
+
+<header class="admin-header">
+
+  <!-- Left: Menu and title -->
+  <div class="header-left">
+    <button
+      type="button"
+      class="menu-toggle"
+      aria-label="Toggle sidebar"
+      [attr.aria-expanded]="!sidebarCollapsed"
+      (click)="onMenuClick()">
+     <i
+    class="bi"
+    [ngClass]="sidebarCollapsed
+      ? 'bi-arrow-right'
+      : 'bi-arrow-left'">
+  </i>
+    </button>
+
+    <div class="header-title">
+      <strong>Admin Panel</strong>
+      <span>Career Groups of Computer Education</span>
+    </div>
+  </div>
+
+  <!-- Right: Search and profile -->
+  <div class="header-right">
+
+    <form class="header-search" role="search"
+          (submit)="$event.preventDefault()">
+      <i class="bi bi-search search-icon"></i>
+      <input
+        type="search"
+        placeholder="Search anything..."
+        aria-label="Search admin panel">
+    </form>
+
+    <div class="header-separator"></div>
+
+    <!-- Profile dropdown -->
+    <div class="profile-wrapper">
+
+      <button
+        type="button"
+        class="profile-button"
+        aria-label="Administrator menu"
+        aria-haspopup="true"
+        [attr.aria-expanded]="profileDropdownOpen"
+        (click)="toggleProfileDropdown($event)">
+
+        <span class="profile-avatar">AD</span>
+
+        <span class="profile-info">
+          <strong>Administrator</strong>
+          <small>Super Admin</small>
+        </span>
+
+        <i
+          class="bi profile-chevron"
+          [ngClass]="profileDropdownOpen
+            ? 'bi-chevron-up'
+            : 'bi-chevron-down'">
+        </i>
+      </button>
+
+      <!-- Dropdown menu -->
+      <div
+        class="profile-dropdown"
+        *ngIf="profileDropdownOpen"
+        role="menu">
+
+        <div class="dropdown-user">
+          <span class="profile-avatar dropdown-avatar">AD</span>
+          <div>
+            <strong>Administrator</strong>
+            <small>admin@careergroups.com</small>
+          </div>
+        </div>
+
+        <div class="dropdown-divider"></div>
+
+        <a
+          class="dropdown-item"
+          routerLink="/admin/profile"
+          role="menuitem"
+          (click)="closeProfileDropdown()">
+          <i class="bi bi-person"></i>
+          <span>My Profile</span>
+          <i class="bi bi-chevron-right item-arrow"></i>
+        </a>
+
+        <a
+          class="dropdown-item"
+          routerLink="/admin/settings"
+          role="menuitem"
+          (click)="closeProfileDropdown()">
+          <i class="bi bi-gear"></i>
+          <span>Settings</span>
+          <i class="bi bi-chevron-right item-arrow"></i>
+        </a>
+
+        <div class="dropdown-divider"></div>
+
+        <button
+          type="button"
+          class="dropdown-item logout-item"
+          role="menuitem"
+          (click)="signOut()">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Sign out</span>
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+</header>

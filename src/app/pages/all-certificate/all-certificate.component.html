@@ -1,0 +1,851 @@
+<div class="certificate-page">
+
+  <!-- PAGE HEADER -->
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">ADMIN PANEL / RESULT SHEETS</span>
+      <h1>Certificate Management</h1>
+      <p>
+        Create and manage Career Groups Of Computer Education student grade cards.
+      </p>
+    </div>
+
+    <button
+      class="primary-btn"
+      type="button"
+      (click)="createCertificate()">
+
+      <i class="bi bi-plus-circle"></i>
+      Create Certificate
+    </button>
+  </header>
+
+  <!-- ALERT MESSAGES -->
+  <div class="alert alert-info" *ngIf="loading">
+    <i class="bi bi-arrow-repeat"></i>
+    Loading certificates from database...
+  </div>
+
+  <div class="alert alert-danger" *ngIf="apiError">
+    <i class="bi bi-exclamation-circle"></i>
+    {{ apiError }}
+  </div>
+
+  <div class="alert alert-success" *ngIf="successMessage">
+    <i class="bi bi-check-circle"></i>
+    {{ successMessage }}
+  </div>
+
+  <!-- STATISTICS -->
+  <section class="stats-grid">
+
+    <article class="stat-card">
+      <span class="stat-icon purple">
+        <i class="bi bi-award"></i>
+      </span>
+
+      <div>
+        <small>Total Certificates</small>
+        <h2>{{ totalCertificates }}</h2>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <span class="stat-icon green">
+        <i class="bi bi-file-earmark-pdf"></i>
+      </span>
+
+      <div>
+        <small>PDF Result Sheets</small>
+        <h2>{{ totalCertificates }}</h2>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <span class="stat-icon blue">
+        <i class="bi bi-mortarboard"></i>
+      </span>
+
+      <div>
+        <small>Selected Student</small>
+        <h2>
+          {{ selectedCertificate ? 'Selected' : 'None' }}
+        </h2>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- ===================================== -->
+  <!-- CREATE / EDIT CERTIFICATE FORM -->
+  <!-- ===================================== -->
+
+  <section class="panel editor-panel" *ngIf="showForm">
+
+    <div class="panel-heading">
+      <div>
+        <h2>
+          {{ isEditing ? 'Update Certificate' : 'Create New Certificate' }}
+        </h2>
+
+        <p>Fill in the result sheet details below.</p>
+      </div>
+
+      <button
+        class="icon-btn"
+        type="button"
+        (click)="closeForm()"
+        aria-label="Close">
+
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <form
+      #certificateForm="ngForm"
+      (ngSubmit)="saveCertificate(certificateForm)">
+
+      <!-- STUDENT INFORMATION -->
+      <h3 class="form-section-title">
+        Student Information
+      </h3>
+
+      <div class="form-grid">
+
+        <div class="field">
+          <label for="serialNo">Serial Number *</label>
+
+          <input
+            id="serialNo"
+            name="serialNo"
+            type="text"
+            [(ngModel)]="form.serialNo"
+            required
+            maxlength="40"
+            placeholder="015391">
+        </div>
+
+        <div class="field">
+          <label for="registrationNo">Registration Number *</label>
+
+          <input
+            id="registrationNo"
+            name="registrationNo"
+            type="text"
+            [(ngModel)]="form.registrationNo"
+            required
+            maxlength="60"
+            placeholder="CGCE15438">
+        </div>
+
+        <div class="field">
+          <label for="studentName">Student Name *</label>
+
+          <input
+            id="studentName"
+            name="studentName"
+            type="text"
+            [(ngModel)]="form.studentName"
+            required
+            maxlength="120"
+            placeholder="Enter student full name">
+        </div>
+
+        <div class="field">
+          <label for="fatherName">Father / Mother Name *</label>
+
+          <input
+            id="fatherName"
+            name="fatherName"
+            type="text"
+            [(ngModel)]="form.fatherName"
+            required
+            maxlength="120"
+            placeholder="Enter parent name">
+        </div>
+
+        <div class="field">
+          <label for="course">Course Name *</label>
+
+          <input
+            id="course"
+            name="course"
+            type="text"
+            [(ngModel)]="form.course"
+            required
+            placeholder="ADCA">
+        </div>
+
+        <div class="field">
+          <label for="duration">Course Duration</label>
+
+          <input
+            id="duration"
+            name="duration"
+            type="text"
+            [(ngModel)]="form.duration"
+            placeholder="6 MONTH">
+        </div>
+
+        <div class="field">
+          <label for="trainingCenter">Training Center</label>
+
+          <input
+            id="trainingCenter"
+            name="trainingCenter"
+            type="text"
+            [(ngModel)]="form.trainingCenter">
+        </div>
+
+        <div class="field">
+          <label for="session">Session</label>
+
+          <input
+            id="session"
+            name="session"
+            type="text"
+            [(ngModel)]="form.session"
+            placeholder="2026 - 2027">
+        </div>
+
+        <div class="field">
+          <label for="issueDate">Issued Date *</label>
+
+          <input
+            id="issueDate"
+            name="issueDate"
+            type="date"
+            [(ngModel)]="form.issueDate"
+            required>
+        </div>
+
+        <div class="field">
+          <label for="studentPhoto">Student Photo</label>
+
+          <input
+            id="studentPhoto"
+            name="studentPhoto"
+            type="file"
+            accept="image/*"
+            (change)="onPhotoSelected($event)">
+
+          <small>Image limit: 1.5 MB</small>
+        </div>
+
+      </div>
+
+      <!-- PHOTO PREVIEW -->
+      <div class="photo-preview" *ngIf="form.photo">
+
+        <img
+          [src]="form.photo"
+          alt="Student photo preview">
+
+        <button
+          type="button"
+          class="secondary-btn"
+          (click)="removePhoto()">
+
+          <i class="bi bi-trash"></i>
+          Remove Photo
+        </button>
+
+      </div>
+
+      <div class="section-divider"></div>
+
+      <!-- MODULES -->
+      <div class="section-heading">
+
+        <div>
+          <h3 class="form-section-title">Modules Covered</h3>
+          <p>Add, edit, or remove the course modules.</p>
+        </div>
+
+        <button
+          type="button"
+          class="secondary-btn"
+          (click)="addModule()">
+
+          <i class="bi bi-plus-lg"></i>
+          Add Module
+        </button>
+
+      </div>
+
+      <div
+        class="module-editor"
+        *ngFor="let module of form.modules; let i = index">
+
+        <span class="module-index">{{ i + 1 }}</span>
+
+        <input
+          [name]="'module' + i"
+          [(ngModel)]="form.modules[i]"
+          [attr.aria-label]="'Module ' + (i + 1)"
+          placeholder="Enter module name">
+
+        <button
+          type="button"
+          class="icon-btn danger"
+          (click)="removeModule(i)"
+          aria-label="Remove module">
+
+          <i class="bi bi-trash"></i>
+        </button>
+
+      </div>
+
+      <div class="section-divider"></div>
+
+      <!-- EXAMINATION MARKS -->
+      <div class="section-heading">
+
+        <div>
+          <h3 class="form-section-title">Examination Marks</h3>
+          <p>Enter full marks and the student's obtained marks.</p>
+        </div>
+
+        <button
+          type="button"
+          class="secondary-btn"
+          (click)="addExam()">
+
+          <i class="bi bi-plus-lg"></i>
+          Add Exam
+        </button>
+
+      </div>
+
+      <div class="marks-editor">
+
+        <div class="marks-header">
+          <span>Exam Name</span>
+          <span>Full Marks</span>
+          <span>Marks Obtained</span>
+          <span>Action</span>
+        </div>
+
+        <div
+          class="marks-row"
+          *ngFor="let exam of form.exams; let i = index">
+
+          <input
+            [name]="'examName' + i"
+            [(ngModel)]="exam.name"
+            required
+            placeholder="Exam name"
+            [attr.aria-label]="'Exam name ' + (i + 1)">
+
+          <input
+            [name]="'fullMarks' + i"
+            type="number"
+            [(ngModel)]="exam.fullMarks"
+            required
+            min="1"
+            placeholder="100"
+            [attr.aria-label]="'Full marks ' + (i + 1)">
+
+          <input
+            [name]="'obtained' + i"
+            type="number"
+            [(ngModel)]="exam.obtained"
+            required
+            min="0"
+            [max]="exam.fullMarks"
+            placeholder="0"
+            [attr.aria-label]="'Marks obtained ' + (i + 1)">
+
+          <button
+            type="button"
+            class="icon-btn danger"
+            (click)="removeExam(i)"
+            aria-label="Remove exam">
+
+            <i class="bi bi-trash"></i>
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- RESULT SUMMARY -->
+      <div class="result-summary">
+
+        <div>
+          <span>Full Marks</span>
+          <strong>{{ totalMarks }}</strong>
+        </div>
+
+        <div>
+          <span>Obtained Marks</span>
+          <strong>{{ obtainedMarks }}</strong>
+        </div>
+
+        <div>
+          <span>Percentage</span>
+          <strong>{{ percentage | number:'1.2-2' }}%</strong>
+        </div>
+
+        <div>
+          <span>Grade</span>
+          <strong class="grade-value">{{ grade }}</strong>
+        </div>
+
+      </div>
+
+      <!-- FORM ACTIONS -->
+      <div class="form-actions">
+
+        <button
+          type="button"
+          class="secondary-btn"
+          (click)="closeForm()">
+
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          class="primary-btn"
+          [disabled]="saving">
+
+          <i class="bi bi-check-circle"></i>
+
+          {{
+            saving
+              ? 'Saving...'
+              : (isEditing ? 'Update Certificate' : 'Save Certificate')
+          }}
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </section>
+
+  <!-- ===================================== -->
+  <!-- CERTIFICATE PREVIEW -->
+  <!-- ===================================== -->
+
+  <section
+    class="panel preview-panel"
+    *ngIf="selectedCertificate as certificate">
+
+    <div class="panel-heading preview-toolbar">
+
+      <div>
+        <h2>Certificate Preview</h2>
+        <p>Preview the selected record before downloading the PDF.</p>
+      </div>
+
+      <div class="toolbar-actions">
+
+        <button
+          class="secondary-btn"
+          type="button"
+          (click)="editCertificate(certificate)">
+
+          <i class="bi bi-pencil"></i>
+          Edit
+        </button>
+
+        <button
+          class="primary-btn"
+          type="button"
+          (click)="downloadPdf(certificate)">
+
+          <i class="bi bi-file-earmark-pdf"></i>
+          Download PDF
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- CERTIFICATE PAPER -->
+    <div class="certificate-paper">
+
+      <div class="paper-watermark">
+        Career Groups Of Computer Education
+      </div>
+
+      <!-- HEADER -->
+      <div class="paper-header">
+
+          <div class="logo-placeholder">
+          <img src="assets/image/logo.png" class="w-100" alt="Career Groups Of Computer Education Logo">
+          <!-- <span>Career Groups Of Computer Education </span> -->
+        </div>
+
+
+        <div class="institute-heading">
+
+          <small class="serial-number">
+            Serial No. {{ certificate.serialNo }}
+          </small>
+
+          <h2>Career Groups Of Computer Education</h2>
+
+          <p>An ISO 9001:2015 Certified Company</p>
+
+          <p class="website-line">
+            www.careergroups.in |
+            info&#64;careergroups.info |
+            Contact: +91 9876543210
+          </p>
+
+          <strong class="result-label">
+            Grade Card / Result Sheet
+          </strong>
+
+        </div>
+
+      </div>
+
+      <div class="paper-rule"></div>
+
+      <!-- STUDENT DETAILS -->
+      <div class="student-details">
+
+        <div class="details-list">
+
+          <div>
+            <strong>Registration No.</strong>
+            <b>:</b>
+            <span>{{ certificate.registrationNo }}</span>
+          </div>
+
+          <div>
+            <strong>This Marksheet Is Awarded To</strong>
+            <b>:</b>
+            <span>{{ certificate.studentName }}</span>
+          </div>
+
+          <div>
+            <strong>S/o, D/o</strong>
+            <b>:</b>
+            <span>{{ certificate.fatherName }}</span>
+          </div>
+
+          <div>
+            <strong>Course Name</strong>
+            <b>:</b>
+            <span>{{ certificate.course }}</span>
+          </div>
+
+          <div>
+            <strong>Duration</strong>
+            <b>:</b>
+            <span>{{ certificate.duration }}</span>
+          </div>
+
+          <div>
+            <strong>Training Center</strong>
+            <b>:</b>
+            <span>{{ certificate.trainingCenter }}</span>
+          </div>
+
+        </div>
+
+        <div class="paper-photo">
+
+          <img
+            *ngIf="certificate.photo"
+            [src]="certificate.photo"
+            alt="Student portrait">
+
+          <i
+            *ngIf="!certificate.photo"
+            class="bi bi-person">
+          </i>
+
+        </div>
+
+      </div>
+
+      <!-- MODULES -->
+      <section class="paper-modules">
+
+        <h3>Modules Covered</h3>
+
+        <p *ngFor="let module of certificate.modules">
+          {{ module }}
+        </p>
+
+      </section>
+
+      <!-- EXAMINATION TABLE -->
+      <h3 class="marks-title">
+        Your Performance in the Examination Is as Below
+      </h3>
+
+      <table class="paper-marks-table">
+
+        <thead>
+          <tr>
+            <th>Exam</th>
+            <th>Full Marks</th>
+            <th>Marks Obtained</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let exam of certificate.exams">
+            <td>{{ exam.name }}</td>
+            <td>{{ exam.fullMarks }}</td>
+            <td>{{ exam.obtained }}</td>
+          </tr>
+
+          <tr class="total-row">
+            <td>Total</td>
+            <td>{{ selectedTotalMarks }}</td>
+            <td>{{ selectedObtainedMarks }}</td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+      <!-- RESULT -->
+      <div class="paper-result">
+
+        <strong>
+          Overall Percentage:
+          {{ selectedPercentage | number:'1.2-2' }}%
+        </strong>
+
+        <strong>
+          Grade: {{ selectedGrade }}
+        </strong>
+
+      </div>
+
+      <!-- SESSION -->
+      <div class="paper-footer">
+
+        <span>
+          SESSION: {{ certificate.session }}
+        </span>
+
+        <span>
+          Issued Date: {{ formatDate(certificate.issueDate) }}
+        </span>
+
+      </div>
+
+      <!-- SIGNATURE -->
+      <div class="signature-row">
+        <span>Director</span>
+        <span>Controller of Examination</span>
+      </div>
+
+      <!-- FOOTER -->
+      <p class="paper-bottom">
+        Issued by: Career Groups Of Computer Education |
+        Website: www.careergroups.info |
+        Email: info&#64;careergroups.info |
+        Contact: +91 9876543210
+      </p>
+
+    </div>
+
+  </section>
+
+  <!-- ===================================== -->
+  <!-- ALL CERTIFICATES TABLE -->
+  <!-- ===================================== -->
+
+  <section class="panel records-panel">
+
+    <div class="panel-heading records-heading">
+
+      <div>
+        <h2>All Result Sheets</h2>
+        <p>Search, preview, edit, download, or delete records.</p>
+      </div>
+
+      <div class="search-box">
+
+        <i class="bi bi-search"></i>
+
+        <input
+          type="search"
+          name="searchTerm"
+          [(ngModel)]="searchTerm"
+          placeholder="Search serial, registration, student...">
+
+      </div>
+
+    </div>
+
+    <!-- LOADING -->
+    <div class="loading-state" *ngIf="loading">
+      <i class="bi bi-arrow-repeat"></i>
+      Loading result sheets...
+    </div>
+
+    <div class="table-responsive" *ngIf="!loading">
+
+      <table class="records-table">
+
+        <thead>
+          <tr>
+            <th>Serial No.</th>
+            <th>Student</th>
+            <th>Registration No.</th>
+            <th>Course</th>
+            <th>Issue Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+             *ngFor="let item of filteredCertificates">
+
+            <td>
+              <span class="serial-badge">
+                {{ item.serialNo }}
+              </span>
+            </td>
+
+            <td>
+              <div class="student-cell">
+
+                <img
+                  *ngIf="item.photo"
+                  [src]="item.photo"
+                  alt="">
+
+                <span
+                  *ngIf="!item.photo"
+                  class="student-avatar">
+
+                  <i class="bi bi-person"></i>
+
+                </span>
+
+                <strong>{{ item.studentName }}</strong>
+
+              </div>
+            </td>
+
+            <td>{{ item.registrationNo }}</td>
+
+            <td>
+              <span class="course-badge">
+                {{ item.course }}
+              </span>
+            </td>
+
+            <td>
+              {{ item.issueDate | date:'dd MMM yyyy' }}
+            </td>
+
+            <td>
+
+              <div class="row-actions">
+
+                <button
+                  class="icon-btn view"
+                  type="button"
+                  title="Preview"
+                  (click)="previewCertificate(item)">
+
+                  <i class="bi bi-eye"></i>
+
+                </button>
+
+                <button
+                  class="icon-btn download"
+                  type="button"
+                  title="Download PDF"
+                  (click)="downloadPdf(item)">
+
+                  <i class="bi bi-file-earmark-pdf"></i>
+
+                </button>
+
+                <button
+                  class="icon-btn edit"
+                  type="button"
+                  title="Edit"
+                  (click)="editCertificate(item)">
+
+                  <i class="bi bi-pencil-square"></i>
+
+                </button>
+
+                <button
+                  class="icon-btn danger"
+                  type="button"
+                  title="Delete"
+                  [disabled]="deletingId === (item._id || item.id)"
+                  (click)="deleteCertificate(item)">
+
+                  <i class="bi bi-trash"></i>
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+          <!-- EMPTY STATE -->
+          <tr *ngIf="filteredCertificates.length === 0">
+
+            <td colspan="6">
+
+              <div class="empty-state">
+
+                <i class="bi bi-file-earmark-text"></i>
+
+                <h3>No result sheets found</h3>
+
+                <p>
+                  {{
+                    searchTerm
+                      ? 'Try another search term.'
+                      : 'Create your first certificate to get started.'
+                  }}
+                </p>
+
+                <button
+                  type="button"
+                  class="primary-btn"
+                  (click)="createCertificate()">
+
+                  <i class="bi bi-plus-circle"></i>
+                  Create Certificate
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <!-- TABLE FOOTER -->
+    <footer class="table-footer">
+
+      Showing {{ filteredCertificates.length }}
+      of {{ totalCertificates }} certificates
+
+    </footer>
+
+  </section>
+
+</div>

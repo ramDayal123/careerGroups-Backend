@@ -1,0 +1,212 @@
+
+<div class="dashboard">
+
+  <section class="welcome-banner">
+    <div class="welcome-copy">
+      <span class="eyebrow">
+        <i class="bi bi-stars"></i>
+        INSTITUTE OVERVIEW
+      </span>
+
+      <h1>Welcome back, Admin!</h1>
+
+      <p>
+        Manage your courses, students and certificates
+        from one convenient dashboard.
+      </p>
+    </div>
+
+    <div class="welcome-art">
+      <i class="bi bi-mortarboard-fill"></i>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats-grid" aria-label="Institute statistics">
+
+    <article class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon students">
+          <i class="bi bi-people-fill"></i>
+        </div>
+        <span class="stat-label">Students</span>
+      </div>
+      <h2>{{ stats.students | number }}</h2>
+      <p>Total registered students</p>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon courses">
+          <i class="bi bi-journal-bookmark-fill"></i>
+        </div>
+        <span class="stat-label">Courses</span>
+      </div>
+      <h2>{{ stats.courses | number }}</h2>
+      <p>Available training courses</p>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon certificates">
+          <i class="bi bi-award-fill"></i>
+        </div>
+        <span class="stat-label">Certificates</span>
+      </div>
+      <h2>{{ stats.certificates | number }}</h2>
+      <p>Certificates issued</p>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon blogs">
+          <i class="bi bi-newspaper"></i>
+        </div>
+        <span class="stat-label">Blog Posts</span>
+      </div>
+      <h2>{{ stats.blogs | number }}</h2>
+      <p>Articles published</p>
+    </article>
+
+  </section>
+
+  <div class="dashboard-grid">
+
+    <!-- Recent students -->
+    <section class="panel students-panel">
+      <div class="panel-heading">
+        <div>
+          <h2>Recent Students</h2>
+          <p>Overview of recent registrations</p>
+        </div>
+
+        <button
+          type="button"
+          class="view-link"
+          (click)="viewStudents()">
+          View all <i class="bi bi-arrow-up-right"></i>
+        </button>
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>STUDENT</th>
+              <th>COURSE</th>
+              <th>STATUS</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let student of students">
+              <td>
+                <div class="student-info">
+                  <div class="student-avatar">
+                    {{ student.name.charAt(0) }}
+                  </div>
+                  <div>
+                    <strong>{{ student.name }}</strong>
+                    <small>{{ student.email }}</small>
+                  </div>
+                </div>
+              </td>
+
+              <td>{{ student.course }}</td>
+
+              <td>
+                <span
+                  class="status-pill"
+                  [class.status-active]="student.status === 'Active'"
+                  [class.status-pending]="student.status === 'Pending'">
+                  <span class="status-dot"></span>
+                  {{ student.status }}
+                </span>
+              </td>
+            </tr>
+
+            <tr *ngIf="students.length === 0">
+              <td colspan="3" class="empty-state">
+                No students available.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Quick actions -->
+    <section class="panel actions-panel">
+      <div class="panel-heading">
+        <div>
+          <h2>Quick Actions</h2>
+          <p>Frequently used shortcuts</p>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <button
+          *ngFor="let action of quickActions"
+          type="button"
+          class="action-item"
+          (click)="navigateTo(action.route)">
+
+          <span class="action-icon" [ngClass]="action.color">
+            <i [class]="'bi ' + action.icon"></i>
+          </span>
+
+          <span class="action-copy">
+            <strong>{{ action.label }}</strong>
+            <small>{{ action.description }}</small>
+          </span>
+
+          <i class="bi bi-chevron-right action-arrow"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- Recent activity -->
+    <section class="panel activity-panel">
+      <div class="panel-heading">
+        <div>
+          <h2>Recent Activity</h2>
+          <p>Latest institute updates</p>
+        </div>
+      </div>
+
+      <div class="activity-list">
+        <div class="activity-item" *ngFor="let activity of activities">
+          <div class="activity-icon" [ngClass]="activity.color">
+            <i [class]="'bi ' + activity.icon"></i>
+          </div>
+          <div class="activity-copy">
+            <strong>{{ activity.title }}</strong>
+            <p>{{ activity.description }}</p>
+            <small>{{ activity.time }}</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Institute information -->
+    <section class="panel institute-panel">
+      <div class="institute-icon">
+        <i class="bi bi-mortarboard-fill"></i>
+      </div>
+
+      <h2>Career Groups of Computer Education</h2>
+
+      <p>
+        Learn, build and grow with professional computer
+        education and skill development.
+      </p>
+
+      <button type="button" (click)="navigateTo('about')">
+        Manage Institute <i class="bi bi-arrow-right"></i>
+      </button>
+    </section>
+
+  </div>
+
+
+</div>

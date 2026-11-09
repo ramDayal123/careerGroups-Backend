@@ -1,0 +1,26 @@
+
+:host {
+  display: block;
+  margin-top: auto;
+}
+
+.admin-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 28px;
+  border-top: 1px solid #e9eaf2;
+  background: #fff;
+  color: #8991a3;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+@media (max-width: 576px) {
+  .admin-footer {
+    flex-direction: column;
+    text-align: center;
+    padding: 16px 12px;
+  }
+}
